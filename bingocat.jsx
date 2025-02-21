@@ -10,17 +10,17 @@ const client = new Client({
     ]
 });
 
-const CHANNEL_ID = "1342285708420710451";  // Replace with your channel ID
+const CHANNEL_ID = "1342285708420710451";
 
 client.once("ready", () => {
     console.log(`✅ Logged in as ${client.user.tag}`);
 });
 
 client.on("messageCreate", async (message) => {
-    if (message.author.bot) return; // Ignore bot messages
-    if (message.channel.id !== CHANNEL_ID) return; // Only listen in the right channel
+    if (message.author.bot) return;
+    if (message.channel.id !== CHANNEL_ID) return;
 
-    let nickname = message.content.trim(); // Get the message content
+    let nickname = message.content.trim();
 
     if (!nickname) {
         message.channel.send("❌ Please enter a valid nickname!");
@@ -33,10 +33,9 @@ client.on("messageCreate", async (message) => {
     }
 
     try {
-        await message.member.setNickname(nickname); // Change the user's nickname
+        await message.member.setNickname(nickname);
         await message.channel.send(`✅ Nickname updated to: **${nickname}**`);
 
-        // Delete the user's message after 2 seconds
         setTimeout(() => message.delete().catch(console.error), 2000);
     } catch (error) {
         console.error("Failed to change nickname:", error);
