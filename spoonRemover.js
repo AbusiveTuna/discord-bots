@@ -30,6 +30,11 @@ client.on('messageReactionAdd', async (reaction, user) => {
 
     const spoonEmojis = ['🥄', 'spoon', 'bowl_with_spoon'];
     const emojiName = reaction.emoji.name;
+    const emojiIdentifier = reaction.emoji.toString();
+
+    const isSpoon =
+    spoonEmojis.includes(emojiName) ||
+    spoonEmojis.some(name => emojiIdentifier.includes(name));
 
     if (!spoonEmojis.includes(emojiName) || user.id === client.user.id) return;
 
