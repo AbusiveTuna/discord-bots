@@ -8,7 +8,8 @@ const client = new Client({
         GatewayIntentBits.Guilds,
         GatewayIntentBits.GuildMessages,
         GatewayIntentBits.GuildMessageReactions,
-        GatewayIntentBits.MessageContent
+        GatewayIntentBits.MessageContent,
+        GatewayIntentBits.GuildMembers
     ],
     partials: [Partials.Message, Partials.Channel, Partials.Reaction, Partials.User]
 });
@@ -30,11 +31,22 @@ client.on('messageReactionAdd', async (reaction, user) => {
     const spoonEmojis = ['🥄', 'spoon', 'bowl_with_spoon'];
     const emojiName = reaction.emoji.name;
 
-    if (
-        spoonEmojis.includes(emojiName) &&
-        user.id !== client.user.id &&
-        user.username.toLowerCase().includes('snp')
-    ) {
+    if (!spoonEmojis.includes(emojiName) || user.id === client.user.id) return;
+
+    let member;
+    try {
+        member = await reaction.message.guild.members.fetch(user.id);
+    } catch (err) {
+        console.error('Failed to fetch member:', err);
+        return;
+    }
+
+    const nameToCheck = [
+        member.nickname,
+        user.username
+    ].filter(Boolean).join(' ').toLowerCase();
+
+    if (nameToCheck.includes('snp')) {
         try {
             await reaction.users.remove(user.id);
         } catch (error) {
