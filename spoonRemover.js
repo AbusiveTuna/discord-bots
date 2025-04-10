@@ -34,7 +34,9 @@ client.on('messageReactionAdd', async (reaction, user) => {
 
     const isSpoon = spoonEmojis.includes(emojiName) || spoonEmojis.some(name => emojiIdentifier.includes(name));
     
-    console.log('Emoji info:', reaction.emoji);
+    console.log('Emoji info:', {
+        name: reaction.emoji.name
+    });
     
     if (!isSpoon || user.id === client.user.id) return;
 
@@ -55,7 +57,6 @@ client.on('messageReactionAdd', async (reaction, user) => {
         try {
             await reaction.users.remove(user.id);
             await reaction.message.channel.send(`${user}, SPOON REMOVED.`);
-            console.log('REMOVED SPOON FOR:', user.username);
         } catch (error) {
             if (error.code === 50013) {
                 console.log('Missing permissions to remove reactions.');
