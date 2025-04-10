@@ -42,13 +42,15 @@ client.on('messageReactionAdd', async (reaction, user) => {
     }
 
     const nameToCheck = [
-        member.nickname,
+        member?.nickname,
         user.username
     ].filter(Boolean).join(' ').toLowerCase();
 
     if (nameToCheck.includes('snp')) {
         try {
             await reaction.users.remove(user.id);
+            await reaction.message.reply(`${user}, SPOON REMOVED.`);
+            console.log('REMOVED SPOON FOR:', user.username);
         } catch (error) {
             if (error.code === 50013) {
                 console.log('Missing permissions to remove reactions.');
@@ -58,5 +60,6 @@ client.on('messageReactionAdd', async (reaction, user) => {
         }
     }
 });
+
 
 client.login(TOKEN);
