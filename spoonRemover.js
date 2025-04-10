@@ -33,7 +33,13 @@ client.on('messageReactionAdd', async (reaction, user) => {
     const emojiIdentifier = reaction.emoji.toString();
 
     const isSpoon = spoonEmojis.includes(emojiName) || spoonEmojis.some(name => emojiIdentifier.includes(name));
-
+    
+    console.log('Emoji info:', {
+        name: reaction.emoji.name,
+        id: reaction.emoji.id,
+        identifier: reaction.emoji.toString()
+    });
+    
     if (!isSpoon || user.id === client.user.id) return;
 
     let member;
