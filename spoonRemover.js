@@ -52,7 +52,7 @@ client.on('messageReactionAdd', async (reaction, user) => {
     if (nameToCheck.includes('snp')) {
         try {
             await reaction.users.remove(user.id);
-            await reaction.message.reply(`${user}, SPOON REMOVED.`);
+            await reaction.message.channel.send(`${user}, SPOON REMOVED.`);
             console.log('REMOVED SPOON FOR:', user.username);
         } catch (error) {
             if (error.code === 50013) {
