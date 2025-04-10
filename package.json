@@ -4,12 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node bot.js"
+    "start": "concurrently \"node bingoCat.jsx\" \"node spoonBot.js\""
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "concurrently": "^9.1.2",
     "discord.js": "^14.18.0",
     "dotenv": "^16.4.7"
   }

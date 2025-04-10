@@ -1,1 +1,1 @@
-worker: node bingocat.jsx
+worker: concurrently "node bingoCat.jsx" "node spoonRemover.jsx"
