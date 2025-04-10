@@ -28,17 +28,13 @@ client.on('messageReactionAdd', async (reaction, user) => {
         }
     }
 
-    const spoonEmojis = ['🥄', 'spoon', 'bowl_with_spoon'];
+    const spoonEmojis = ['🥄', '🥣', 'spoon', 'bowl_with_spoon'];
     const emojiName = reaction.emoji.name;
     const emojiIdentifier = reaction.emoji.toString();
 
     const isSpoon = spoonEmojis.includes(emojiName) || spoonEmojis.some(name => emojiIdentifier.includes(name));
     
-    console.log('Emoji info:', {
-        name: reaction.emoji.name,
-        id: reaction.emoji.id,
-        identifier: reaction.emoji.toString()
-    });
+    console.log('Emoji info:', reaction.emoji);
     
     if (!isSpoon || user.id === client.user.id) return;
 
