@@ -1,6 +1,7 @@
 // index.js
 require('dotenv').config();
 const { Client, GatewayIntentBits, Partials, PermissionsBitField } = require('discord.js');
+const axios = require('axios');
 
 const CONFIG = {
   SOURCE_CHANNEL_ID: '1410985264884617286',
@@ -22,7 +23,13 @@ const CONFIG = {
     'Recruit'   : '1750+ Total Lvl',
     'Champion'  : '<1750 Total Lvl'
   },
-  RATE_DELAY_MS: 600
+  RATE_DELAY_MS: 600,
+  SUMMARY_TTL_SEC: 0,
+  TEMPLE_GROUP_ID: process.env.TEMPLE_GROUP_ID || '2176',
+  TEMPLE_KEY: process.env.TEMPLE_KEY || 'sXhAFwmhDN44O74PRn7xBj7Iu',
+  TEMPLE_ADD_URL: 'https://templeosrs.com/api/add_group_member.php',
+  TEMPLE_MEMBERS_URL: (id) => `https://templeosrs.com/api/groupmembers.php?id=${id}`,
+  TEMPLE_BATCH_SIZE: 200
 };
 
 const MANAGED_ROLES = [...new Set(Object.values(CONFIG.ROLE_MAP).filter(Boolean))];
@@ -90,6 +97,47 @@ async function resolveManagedRoles(guild) {
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
+function normalizeTempleName(s) {
+  return (s || '').toLowerCase().replace(/\s/g, '');
+}
+
+async function fetchTempleMembers() {
+  try {
+    const url = CONFIG.TEMPLE_MEMBERS_URL(CONFIG.TEMPLE_GROUP_ID);
+    const res = await axios.get(url, { timeout: 20000 });
+    const data = res.data;
+    if (Array.isArray(data)) return data.map(String);
+    if (typeof data === 'string') {
+      return data.split(/\r?\n|,/).map(x => x.trim()).filter(Boolean);
+    }
+    if (data && Array.isArray(data.members)) return data.members.map(String);
+    return [];
+  } catch {
+    return [];
+  }
+}
+
+async function addTempleMembers(players) {
+  if (!players.length) return { added: 0, errors: 0 };
+  let added = 0, errors = 0;
+  for (let i = 0; i < players.length; i += CONFIG.TEMPLE_BATCH_SIZE) {
+    const batch = players.slice(i, i + CONFIG.TEMPLE_BATCH_SIZE);
+    try {
+      const form = new URLSearchParams({ id: CONFIG.TEMPLE_GROUP_ID, key: CONFIG.TEMPLE_KEY, players: batch.join(',') });
+      await axios.post(CONFIG.TEMPLE_ADD_URL, form.toString(), {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        timeout: 20000
+      });
+      added += batch.length;
+      await delay(500);
+    } catch {
+      errors += batch.length;
+      await delay(1000);
+    }
+  }
+  return { added, errors };
+}
+
 async function processDump(message) {
   if (message.channel.id !== CONFIG.SOURCE_CHANNEL_ID) return;
   if (!message.member?.permissions.has(PermissionsBitField.Flags.ManageRoles)) return;
@@ -111,29 +159,22 @@ async function processDump(message) {
   const allMembers = await guild.members.fetch();
   const memberIndex = buildMemberIndex(allMembers);
 
-  const results = { total: rows.length, updated: 0, baseAdded: 0, noMember: 0, noRoleInMap: 0, noDiscordRole: 0, errors: 0 };
-  await message.reply(`Processing ${results.total} rows...`);
+  const stats = { total: rows.length, updated: 0, baseAdded: 0, noMember: 0, noRoleInMap: 0, noDiscordRole: 0, errors: 0 };
+  const progressMsg = await message.reply(`Processing ${stats.total} rows...`);
 
+  const uniqueNames = new Set();
   for (const { name, dumpRole } of rows) {
+    uniqueNames.add(name.trim());
     const discordRoleName = CONFIG.ROLE_MAP[dumpRole];
-    if (!discordRoleName) {
-      results.noRoleInMap++;
-      continue;
-    }
+    if (!discordRoleName) { stats.noRoleInMap++; continue; }
     const member = memberIndex.get(name.toLowerCase());
-    if (!member) {
-      results.noMember++;
-      continue;
-    }
+    if (!member) { stats.noMember++; continue; }
     const targetRole = managedRoles.get(discordRoleName);
-    if (!targetRole) {
-      results.noDiscordRole++;
-      continue;
-    }
+    if (!targetRole) { stats.noDiscordRole++; continue; }
     try {
       if (!member.roles.cache.has(baseRole.id)) {
         await member.roles.add(baseRole);
-        results.baseAdded++;
+        stats.baseAdded++;
         await delay(CONFIG.RATE_DELAY_MS);
       }
       const currentManaged = member.roles.cache.filter(r => managedRoleIds.has(r.id));
@@ -142,24 +183,36 @@ async function processDump(message) {
         await delay(CONFIG.RATE_DELAY_MS);
       }
       await member.roles.add(targetRole);
-      results.updated++;
+      stats.updated++;
     } catch {
-      results.errors++;
+      stats.errors++;
     }
     await delay(CONFIG.RATE_DELAY_MS);
   }
 
+  const currentTemple = await fetchTempleMembers();
+  const currentIdx = new Set(currentTemple.map(normalizeTempleName));
+  const candidates = [...uniqueNames].filter(n => n && !currentIdx.has(normalizeTempleName(n)));
+  const { added: templeAdded, errors: templeErrors } = await addTempleMembers(candidates);
+
   const summary = [
-    `Updated: ${results.updated}`,
-    `Base added: ${results.baseAdded}`,
-    `No member: ${results.noMember}`,
-    `Unmapped role: ${results.noRoleInMap}`,
-    `Role missing in Discord: ${results.noDiscordRole}`,
-    `Errors: ${results.errors}`
+    `Updated: ${stats.updated}`,
+    `Base added: ${stats.baseAdded}`,
+    `No member: ${stats.noMember}`,
+    `Unmapped role: ${stats.noRoleInMap}`,
+    `Role missing in Discord: ${stats.noDiscordRole}`,
+    `Errors: ${stats.errors}`,
+    `Temple added: ${templeAdded}`,
+    `Temple add errors: ${templeErrors}`
   ].join(' | ');
-  await message.reply(`Done. ${summary}`);
+
+  const summaryMsg = await progressMsg.edit(`Done. ${summary}`);
 
   try { await message.delete(); } catch {}
+
+  if (CONFIG.SUMMARY_TTL_SEC > 0) {
+    setTimeout(async () => { try { await summaryMsg.delete(); } catch {} }, CONFIG.SUMMARY_TTL_SEC * 1000);
+  }
 }
 
 client.on('ready', () => {
