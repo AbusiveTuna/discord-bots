@@ -123,4 +123,4 @@ client.on('messageCreate', async (message) => {
   await processDump(message);
 });
 
-client.login(process.env.BOT_TOKEN);
+client.login(process.env.IRONMANCC_TOKEN);
