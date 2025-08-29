@@ -5,8 +5,21 @@ const { Client, GatewayIntentBits, Partials, PermissionsBitField } = require('di
 const CONFIG = {
   SOURCE_CHANNEL_ID: '1410985264884617286',
   ROLE_MAP: {
+    'Officer' : 'Vouch Lvl 2',
+    'General' : 'Vouch Lvl 1',
+    'Legacy' : 'Former Mod',
+    'Scholar' : 'Clogger!',
+    'Wrath' : 'PvM Master',
+    'Merchant' : 'Sherlock Holmes',
+    'Competitor' : 'Skilling Extraordinaire',
+    'TzKal' : 'Zuk Slayer',
+    'Archer' : 'Sol Vanquisher',
+    'Maxed' : 'Maxed',
+    'Xerician' : 'Raid Conqueror',
+    'Achiever' : 'Diary Cape Holder',
     'Corporal': '2000+ Total Lvl',
-    'Recruit': '1750+ Total Lvl'
+    'Recruit': '1750+ Total Lvl',
+    'Champion': ''
   },
   RATE_DELAY_MS: 600
 };
