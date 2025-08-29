@@ -21,3 +21,4 @@ jobs:
             git pull
             pm2 restart bingoCat
             pm2 restart spoonRemover
+            pm2 restart ironmanccBot
