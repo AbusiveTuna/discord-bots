@@ -6,7 +6,6 @@ const client = new Client({
 });
 
 const ALLEGATIONS = [
-  "Jinx pronounces Runescape as Run Escape",
   "Jinx was on the client list.",
   "No where knows where Goose World was on Jan 6th",
 ];
