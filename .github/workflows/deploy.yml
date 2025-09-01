@@ -18,7 +18,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             cd ~/discord-bots/discord-bots
-            git pull
+            git pull -f
             pm2 restart bingoCat
-            pm2 restart spoonRemover
+            # pm2 restart spoonRemover
             pm2 restart ironmanccBot
