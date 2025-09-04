@@ -7,7 +7,9 @@ const client = new Client({
 
 const ALLEGATIONS = [
   "Jinx was on the client list.",
-  "No where knows where Goose World was on Jan 6th",
+  "No one knows where Goose World was on Jan 6th",
+  "Zero Rangers opens clues on Entrana.",
+  "Tuna can't spell"
 ];
 
 client.once("ready", () => {
