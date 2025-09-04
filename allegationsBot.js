@@ -11,7 +11,8 @@ const ALLEGATIONS = [
   "Zero Rangers opens clues on Entrana.",
   "Tuna can't spell",
   "Tj's mom used to date Sean. She fucked around on him with some dirt bag and that guy dies a dozen years later. Sean still had resentment and I stood up for him. It causes a crazy argument and everybody turned on each other poor advice (Sean) hasn't played since. Tyrone Gilberg retaliated by taking the account that I spent thousands of hours on.",
-"Veryx isnt actually a vet."
+"Veryx isnt actually a vet.",
+"Noble didnt fall for the Camelot teletab scam"
 ];
 
 client.once("ready", () => {
