@@ -17,7 +17,8 @@ const ALLEGATIONS = [
 "Goose world lives in Brampton",
 "Chkn isnt actually a chicken",
 "F aladorable isn't a real friend",
-"Jinx is a UK native"
+"Jinx is a UK native",
+"James uses a stepping stool to reach his cupboards."
 ];
 
 client.once("ready", () => {
