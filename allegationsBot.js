@@ -14,9 +14,10 @@ const ALLEGATIONS = [
 "Veryx isnt actually a vet.",
 "Noble didnt fall for the Camelot teletab scam", 
 "Veryx shot Osama Bin Laden",
-"Goose world is behind the a sync name scandel",
+"Goose world lives in Brampton",
 "Chkn isnt actually a chicken",
-"F aladorable isn't a real friend"
+"F aladorable isn't a real friend",
+"Jinx is a UK native"
 ];
 
 client.once("ready", () => {
