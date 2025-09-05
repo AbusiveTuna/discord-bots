@@ -122,9 +122,12 @@ async function fetchTempleMembers() {
 async function addTempleMembers(players) {
   if (!players.length) return { added: 0, errors: 0 };
 
+  // normalize underscores to spaces
+  const normalizedPlayers = players.map(p => p.replace(/_/g, ' '));
+
   let added = 0, errors = 0;
-  for (let i = 0; i < players.length; i += CONFIG.TEMPLE_BATCH_SIZE) {
-    const batch = players.slice(i, i + CONFIG.TEMPLE_BATCH_SIZE);
+  for (let i = 0; i < normalizedPlayers.length; i += CONFIG.TEMPLE_BATCH_SIZE) {
+    const batch = normalizedPlayers.slice(i, i + CONFIG.TEMPLE_BATCH_SIZE);
     try {
       const form = new URLSearchParams({
         id: CONFIG.TEMPLE_GROUP_ID,
@@ -143,6 +146,7 @@ async function addTempleMembers(players) {
   }
   return { added, errors };
 }
+
 
 async function processDump(message) {
   if (message.channel.id !== CONFIG.SOURCE_CHANNEL_ID) return;
