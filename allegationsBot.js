@@ -18,7 +18,20 @@ const ALLEGATIONS = [
 "Chkn isnt actually a chicken",
 "F aladorable isn't a real friend",
 "Jinx is a UK native",
-"James uses a stepping stool to reach his cupboards."
+"James uses a stepping stool to reach his cupboards.",
+"ChatGPT wrote the did I compost plugin",
+"Purple sweets can be used in the Inferno",
+"2 star mods are just 1 star mods with bigger egos",
+"A q p",
+"Jinx has never won a game of runelink (0-18)",
+"Reddy B would smoke Rikarisu in any human endeavour",
+"Astra's still mining sandstone to this day",
+"Shaharrav didn't really go to the vet",
+"Tuna lost his hardcore to a guard dog",
+"CR Minecraft server Chernobyl was an inside job",
+"ABORT GOATS ABORT GOATS ABORT GOATS",
+"!alligators",
+"Bozo Loop was a teak tree bot test gone wrong"
 ];
 
 client.once("ready", () => {
