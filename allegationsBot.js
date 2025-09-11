@@ -31,7 +31,8 @@ const ALLEGATIONS = [
 "CR Minecraft server Chernobyl was an inside job",
 "ABORT GOATS ABORT GOATS ABORT GOATS",
 "!alligators",
-"Bozo Loop was a teak tree bot test gone wrong"
+"Bozo Loop was a teak tree bot test gone wrong",
+"If you don't have an allegation it just means Tuna doesn't like you"
 ];
 
 client.once("ready", () => {
