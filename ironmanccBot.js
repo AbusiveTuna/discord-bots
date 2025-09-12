@@ -19,6 +19,7 @@ const CONFIG = {
     'Maxed'     : 'Maxed',
     'Xerician'  : 'Raid Conqueror',
     'Achiever'  : 'Diary Cape Holder',
+    'Sergeant' : '2200+ Total Lvl',
     'Corporal'  : '2000+ Total Lvl',
     'Recruit'   : '1750+ Total Lvl',
     'Champion'  : '<1750 Total Lvl'
